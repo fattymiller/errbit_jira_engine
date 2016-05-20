@@ -13,3 +13,5 @@
  *= require_tree .
  *= require_self
  */
+
+#action-bar span.jira a:before { font-family: FontAwesome; content: "\f171"; margin-right: 8px; position: relative; top: 4px; font-size: 26px; }

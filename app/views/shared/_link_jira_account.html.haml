@@ -1,0 +1,5 @@
+- if Errbit::Config.jira_authentication && user == current_user
+  - if user.jira_account?
+    %span.jira= link_to "Unlink #{Errbit::Config.jira_site_title} account", jira.unlink_jira_path(user), :method => :delete, :data => { :confirm => "Are you sure?" }
+  - else
+    %span.jira= link_to "Link #{Errbit::Config.jira_site_title} account", main_app.user_omniauth_authorize_path(:jira)
