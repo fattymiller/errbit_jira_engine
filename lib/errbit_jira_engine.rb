@@ -14,7 +14,7 @@ module ErrbitJiraEngine
   def self.consumer_credentials
     @consumer_credentials ||= {
       consumer_key: Errbit::Config.jira_consumer_key,
-      consumer_secret: OpenSSL::PKey::RSA.new(IO.read(Errbit::Config.jira_private_key))
+      consumer_secret: OpenSSL::PKey::RSA.new(Errbit::Config.jira_private_key.to_s.gsub('\n', "\n"))
     }
   end
   
@@ -25,8 +25,7 @@ module ErrbitJiraEngine
     
       @client_settings = {
         site: Errbit::Config.jira_application_url,
-        context_path: context_path,
-        private_key_file: Errbit::Config.jira_private_key
+        context_path: context_path
       }
     end
     
