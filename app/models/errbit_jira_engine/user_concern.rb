@@ -14,7 +14,7 @@ module ErrbitJiraEngine::UserConcern
     self.jira_uid = auth_hash.info.email
     self.jira_token = auth_hash.credentials['token']
     self.jira_secret = auth_hash.credentials['secret']
-    self.jira_expires_at = Time.at(auth_hash.credentials['expires_at'])
+    self.jira_expires_at = Time.at(auth_hash.credentials['expires_at']) if auth_hash.credentials['expires_at']
     
     save!
   end

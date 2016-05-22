@@ -20,6 +20,12 @@ module Jira
       
       current_user.jira_token = access_token.token
       current_user.jira_secret = access_token.secret
+      
+      if access_token.params[:oauth_expires_in]
+        seconds = access_token.params[:oauth_expires_in] / 1000
+        current_user.jira_expires_at = Time.now + seconds.seconds
+      end
+      
       current_user.save!
       
       resumed_problem_id = session[:jira]['create_issue']
