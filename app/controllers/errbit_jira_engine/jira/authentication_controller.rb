@@ -4,13 +4,9 @@ module Jira
     
     def initiate
       request_token = jira_client.request_token(oauth_callback: jira.jira_finalise_url)
-      Rails.logger.info(request_token.inspect)
 
       session[:jira]['request_token'] = request_token.token
       session[:jira]['request_token_secret'] = request_token.secret
-      
-      Rails.logger.info('~~ initiate ~~')
-      Rails.logger.info(session[:jira].inspect)
       
       redirect_to request_token.authorize_url
     end
@@ -19,26 +15,19 @@ module Jira
       request_token = get_request_token
       return unless request_token
       
-      Rails.logger.info('~~ finalise ~~')
-      
       access_token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
       current_user.jira_token = access_token.token
       current_user.jira_secret = access_token.secret
       current_user.save!
       
-      if session[:jira] && (problem_id = session[:jira]['create_issue'])
-        problem = Problem.find(problem_id)
-        issue = IssueService.create_issue(self, problem, current_user) if problem
-        
-        if issue
-          flash[:error] = issue.errors.full_messages.join(', ') if issue.errors.any?
-          return redirect_to(main_app.app_problem_path(problem.app, problem))
-        end
+      if session[:jira] && session[:jira]['create_issue']
+        redirect_to jira.resume_create_issue_path
+      else
+        redirect_to main_app.user_path(current_user)
       end
-
-      redirect_to main_app.user_path(current_user)
     ensure
-      session[:jira] = nil
+      session[:jira].delete('request_token')
+      session[:jira].delete('request_token_secret')
     end
     
     private
@@ -50,17 +39,12 @@ module Jira
     def get_request_token
       return @request_token if @request_token
       
-      Rails.logger.info('~~ get_request_token ~~')
-      Rails.logger.info(session[:jira].inspect)
-      
       token = session[:jira]['request_token']
       secret = session[:jira]['request_token_secret']
       
       if token.present? && secret.present?
-        Rails.logger.info('setting request_token..')
         @request_token = jira_client.set_request_token(token, secret)
       else
-        Rails.logger.info("something is blank: #{token.blank?} && #{secret.blank?}. redirecting.")
         redirect_to jira.jira_initiate_path
       end
       
