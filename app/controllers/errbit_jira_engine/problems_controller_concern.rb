@@ -14,7 +14,7 @@ module ErrbitJiraEngine::ProblemsControllerConcern
       session[:jira] ||= {}
       session[:jira][:create_issue] = problem.id
 
-      return redirect_to(jira.jira_initiate)
+      return redirect_to(jira.jira_initiate_path)
     end
   end
 end
