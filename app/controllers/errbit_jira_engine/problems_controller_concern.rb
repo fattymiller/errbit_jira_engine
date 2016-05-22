@@ -8,7 +8,6 @@ module ErrbitJiraEngine::ProblemsControllerConcern
   end
   
   private def ensure_authorised!
-    binding.pry
     issue_tracker = app.issue_tracker.try(:type).try(:object)
   
     if issue_tracker && issue_tracker <= ErrbitJiraEngine::IssueTracker && !current_user.jira_authorisation_current?
