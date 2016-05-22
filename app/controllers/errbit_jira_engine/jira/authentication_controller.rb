@@ -21,7 +21,7 @@ module Jira
       
       Rails.logger.info('~~ finalise ~~')
       
-      access_token = request_token.init_access_token(oauth_verifier: params[:oauth_verifier])
+      access_token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
       current_user.jira_token = access_token.token
       current_user.jira_secret = access_token.secret
       current_user.save!
