@@ -4,8 +4,13 @@ module Jira
     
     def initiate
       request_token = jira_client.request_token(oauth_callback: jira.jira_finalise_url)
+      Rails.logger.info(request_token.inspect)
+
       session[:jira][:request_token] = request_token.token
       session[:jira][:request_token_secret] = request_token.secret
+      
+      Rails.logger.info('~~ initiate ~~')
+      Rails.logger.info(session[:jira].inspect)
       
       redirect_to request_token.authorize_url
     end
@@ -13,6 +18,8 @@ module Jira
     def finalise
       request_token = get_request_token
       return unless request_token
+      
+      Rails.logger.info('~~ finalise ~~')
       
       access_token = request_token.init_access_token(oauth_verifier: params[:oauth_verifier])
       current_user.jira_token = access_token.token
@@ -43,12 +50,17 @@ module Jira
     def get_request_token
       return @request_token if @request_token
       
+      Rails.logger.info('~~ get_request_token ~~')
+      Rails.logger.info(session[:jira].inspect)
+      
       token = session[:jira][:request_token]
       secret = session[:jira][:request_token_secret]
       
       if token.present? && secret.present?
+        Rails.logger.info('setting request_token..')
         @request_token = jira_client.set_request_token(token, secret)
       else
+        Rails.logger.info('something is blank: #{token.blank?} && #{secret.blank?}. redirecting.')
         redirect_to jira.jira_initiate_path
       end
       
