@@ -11,6 +11,9 @@ module Jira
     end
     
     def finalise
+      request_token = get_request_token
+      return unless request_token
+      
       access_token = request_token.init_access_token(oauth_verifier: params[:oauth_verifier])
       current_user.jira_token = access_token.token
       current_user.jira_secret = access_token.secret
@@ -37,7 +40,7 @@ module Jira
       @jira_client ||= ErrbitJiraEngine.create_client
     end
     
-    def request_token
+    def get_request_token
       return @request_token if @request_token
       
       token = session[:jira][:request_token]
@@ -48,6 +51,8 @@ module Jira
       else
         redirect_to jira.jira_initiate_path
       end
+      
+      @request_token
     end
   end
 end
