@@ -16,6 +16,8 @@ module Jira
       return unless request_token
       
       access_token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
+      Rails.logger.info(access_token)
+      
       current_user.jira_token = access_token.token
       current_user.jira_secret = access_token.secret
       current_user.save!
