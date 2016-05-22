@@ -21,10 +21,10 @@ module ErrbitJiraEngine
   
   def self.certificate_file
     unless @certificate_file && File.exist?(@certificate_file)
-      Tempfile.open(['jira_private_key', '.pem']) do |f|
+      File.open(Rails.root.join('./tmp/jira_private_key.pem'), 'w') do |f|
         f.write(private_key_contents)
         @certificate_file = f.path
-      end      
+      end
     end
     
     @certificate_file
