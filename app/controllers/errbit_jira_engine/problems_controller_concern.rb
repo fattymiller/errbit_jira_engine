@@ -12,7 +12,7 @@ module ErrbitJiraEngine::ProblemsControllerConcern
   
     if issue_tracker && issue_tracker <= ErrbitJiraEngine::IssueTracker && !current_user.jira_authorisation_current?
       session[:jira] ||= {}
-      session[:jira][:create_issue] = problem.id
+      session[:jira]['create_issue'] = problem.id
 
       return redirect_to(jira.jira_initiate_path)
     end

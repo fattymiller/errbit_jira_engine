@@ -26,17 +26,17 @@ module Jira
       current_user.jira_secret = access_token.secret
       current_user.save!
       
-      if session[:jira] && (problem_id = session[:jira][:create_issue])
+      if session[:jira] && (problem_id = session[:jira]['create_issue'])
         problem = Problem.find(problem_id)
         issue = IssueService.create_issue(self, problem, current_user) if problem
         
         if issue
-          flash[:error] = issue.errors.full_messages.join(', ') unless issue.valid?
+          flash[:error] = issue.errors.full_messages.join(', ') if issue.errors.any?
           return redirect_to(main_app.app_problem_path(problem.app, problem))
         end
       end
 
-      redirect user_path(current_user)
+      redirect_to main_app.user_path(current_user)
     ensure
       session[:jira] = nil
     end
