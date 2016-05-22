@@ -11,10 +11,29 @@ module ErrbitJiraEngine
     File.read(File.join(self.root, 'app/assets/images/errbit_jira_engine', file))
   end
   
+  def self.private_key_contents
+    @private_key_contents ||= Errbit::Config.jira_private_key.to_s.gsub('\n', "\n")
+  end
+  
+  def self.private_key_certificate
+    @private_key_certificate ||= OpenSSL::PKey::RSA.new(private_key_contents)
+  end
+  
+  def self.certificate_file
+    unless @certificate_file && File.exist?(@certificate_file)
+      Tempfile.open(['jira_private_key', '.pem']) do |f|
+        f.write(private_key_contents)
+        @certificate_file = f.path
+      end      
+    end
+    
+    @certificate_file
+  end
+  
   def self.consumer_credentials
     @consumer_credentials ||= {
       consumer_key: Errbit::Config.jira_consumer_key,
-      consumer_secret: OpenSSL::PKey::RSA.new(Errbit::Config.jira_private_key.to_s.gsub('\n', "\n"))
+      consumer_secret: private_key_certificate
     }
   end
   
@@ -25,7 +44,8 @@ module ErrbitJiraEngine
     
       @client_settings = {
         site: Errbit::Config.jira_application_url,
-        context_path: context_path
+        context_path: context_path,
+        private_key_file: certificate_file
       }
     end
     
