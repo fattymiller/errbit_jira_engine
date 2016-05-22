@@ -8,7 +8,7 @@ module ErrbitJiraEngine::ProblemsControllerConcern
   end
   
   def resume_create_issue
-    params[:id] = session[:jira]['create_issue'].to_i    
+    params[:id] = session[:jira]['create_issue']    
     issue = IssueService.create_issue(self, problem, current_user) if problem    
     flash[:error] = issue.errors.full_messages.join(', ') if issue && issue.errors.any?
     

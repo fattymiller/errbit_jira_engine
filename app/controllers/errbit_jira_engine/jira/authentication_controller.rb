@@ -20,8 +20,11 @@ module Jira
       current_user.jira_secret = access_token.secret
       current_user.save!
       
-      if session[:jira] && session[:jira]['create_issue']
-        redirect_to jira.resume_create_issue_path
+      resumed_problem_id = session[:jira]['create_issue']
+      resumed_problem = Problem.find(resumed_problem_id) if resumed_problem_id
+      
+      if resumed_problem 
+        redirect_to jira.resume_create_issue_path(resumed_problem.app_id)
       else
         redirect_to main_app.user_path(current_user)
       end
