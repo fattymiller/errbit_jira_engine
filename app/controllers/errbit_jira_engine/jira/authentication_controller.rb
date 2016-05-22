@@ -22,7 +22,7 @@ module Jira
       current_user.jira_secret = access_token.secret
       
       if access_token.params[:oauth_expires_in]
-        seconds = access_token.params[:oauth_expires_in] / 1000
+        seconds = access_token.params[:oauth_expires_in].to_i / 1000
         current_user.jira_expires_at = Time.now + seconds.seconds
       end
       
