@@ -121,7 +121,10 @@ module ErrbitJiraEngine
     end
 
     def ctx_path
-      (options['context_path'] == '') ? '/' : options['context_path']
+      path = options['context_path']
+      path += '/' unless path.end_with?('/')
+      
+      path
     end
     
     def issue_type
