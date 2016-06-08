@@ -121,7 +121,7 @@ module ErrbitJiraEngine
     end
 
     def ctx_path
-      path = options['context_path']
+      path = options['context_path'].to_s
       path += '/' unless path.end_with?('/')
       
       path
