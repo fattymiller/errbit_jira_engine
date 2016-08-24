@@ -83,7 +83,7 @@ module ErrbitJiraEngine
       begin
         issue = {
           "fields" => {
-            "summary" => title,
+            "summary" => title.split("\n").join(' '),
             "description" => body,
             "project" => {"key" => options['project_id']},
             "issuetype" => {"name" => issue_type},
